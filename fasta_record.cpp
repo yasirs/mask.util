@@ -50,6 +50,7 @@ std::istream& operator>>(std::istream& stream, Record& rhs)
             while (getline(stream, line) && '>' != stream.peek()) {
                 sequence += line;
             }
+            if ('>'== stream.peek()) sequence += line;
             rhs.d_sequence.swap(sequence);
 
             // We read a complete record; even if we hit EOF, mark 'stream'
