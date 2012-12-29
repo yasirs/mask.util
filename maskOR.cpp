@@ -4,6 +4,7 @@
 #include <iterator>
 #include <exception>
 #include <string>
+#include <sstream>
 
 
 using namespace std;
@@ -11,13 +12,15 @@ using namespace std;
 class nameExc : public exception {
     public:
         string name1, name2;
-        nameExc(string n1, string n2): name1(n1), name2(n2) {}
+        long int recnum;
+        nameExc(string n1, string n2, long int rn): name1(n1), name2(n2), recnum(rn) {}
         virtual const char* what() const throw()
-            {
-                ostringstream out;
-                out << name1<<" and "<<name2<<" are different at record number "<< recnum;
-                return out.str();
-            }
+        {
+            ostringstream out;
+            out << name1<<" and "<<name2<<" are different at record number "<< recnum;
+            return out.str().c_str();
+        }
+        ~nameExc() throw();
 };
 
 
