@@ -5,9 +5,20 @@
 #include <exception>
 #include <string>
 #include <sstream>
+#include <stdexcept>
+
 
 
 using namespace std;
+
+int a_to_i(const char *s) {
+    stringstream ss;
+    ss << s;
+    int i;
+    ss >> i;
+    return(i);
+}
+
 
 class nameExc : public exception {
     public:
@@ -61,9 +72,14 @@ inline bool ismasked(const char c) {
 
 int main(int argc, char* argv[]) {
     fasta::Record r1, r2;
+    int linesize;
+    if (argc<3) throw(invalid_argument("Usage: mask input1.fasta input2.fasta [n] > combined.fasta\n where n denotes line wrap length for output fasta sequences."));
     ifstream if1(argv[1], ifstream::in);
     ifstream if2(argv[2], ifstream::in);
+    if (argc==3) linesize=50;
+    else linesize = a_to_i(argv[3]);
     long int recn = 0;
+    int lno; int cno;
     while (((if1.peek()!=EOF))or((if2.peek()!=EOF))) {
         /*if (ir1!=e) {
             cout << argv[1] << " ended first\n"; break;
@@ -81,6 +97,8 @@ int main(int argc, char* argv[]) {
             throw lengthExc(s1.length(), s2.length(), recn, r1.name());
         }
         cout << ">"<<r1.name()<<endl;
+        lno = 0;
+        cno = 0; 
         for (int i=0;i<s1.length();i++) {
             if (s1[i]!=s2[i]) {
                 if (ismasked(s1[i]) or ismasked(s2[i])) {
@@ -90,6 +108,9 @@ int main(int argc, char* argv[]) {
                 }
             } else {
                 cout << s1[i];
+            }
+            if ((++cno) > linesize) {
+                cout << '\n'; cno = 0; ++lno;
             }
         }
         cout << endl;
