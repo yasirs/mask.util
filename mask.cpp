@@ -70,8 +70,47 @@ inline bool ismasked(const char c) {
     return ((c=='n')or(c=='N')or(c=='X')or(c=='x'));
 }
 
+fasta::Record* combineRecords(fasta::Record r1, fasta::Record r2, int recn) {
+    auto pr = new fasta::Record;
+    std::string name, sequence;
+    std::stringstream seqstream;
+
+
+    if (r1.name() != r2.name()) {
+        throw nameExc(r1.name(), r2.name(), recn);
+    }
+    pr->setName(r1.name());
+
+    string s1 = r1.sequence(); string s2 = r2.sequence();
+    if (s1.length()!=s2.length()) {
+        throw lengthExc(s1.length(), s2.length(), recn, r1.name());
+    }
+    //cout << ">"<<r1.name()<<endl;
+    for (int i=0;i<s1.length();i++) {
+        if (s1[i]!=s2[i]) {
+            if (ismasked(s1[i]) or ismasked(s2[i])) {
+               seqstream << 'X';
+            } else {
+                throw seqExc(s1[i],s2[i],recn,i,r1.name());
+            }
+        } else {
+            seqstream << s1[i];
+        }
+        //if ((++cno) > linesize) {
+        //    cout << '\n'; cno = 0; ++lno;
+        //}
+    }
+    seqstream >> sequence;
+    pr->setSequence(sequence);
+    
+    return pr;
+
+
+}
+
 int main(int argc, char* argv[]) {
     fasta::Record r1, r2;
+    fasta::Record* pr3;
     int linesize;
     if (argc<3) throw(invalid_argument("Usage: mask input1.fasta input2.fasta [n] > combined.fasta\n where n denotes line wrap length for output fasta sequences."));
     ifstream if1(argv[1], ifstream::in);
@@ -89,30 +128,8 @@ int main(int argc, char* argv[]) {
         }*/
         ++recn;
         if1 >> r1; if2 >> r2;
-        if (r1.name() != r2.name()) {
-            throw nameExc(r1.name(), r2.name(), recn);
-        }
-        string s1 = r1.sequence(); string s2 = r2.sequence();
-        if (s1.length()!=s2.length()) {
-            throw lengthExc(s1.length(), s2.length(), recn, r1.name());
-        }
-        cout << ">"<<r1.name()<<endl;
-        lno = 0;
-        cno = 0; 
-        for (int i=0;i<s1.length();i++) {
-            if (s1[i]!=s2[i]) {
-                if (ismasked(s1[i]) or ismasked(s2[i])) {
-                    cout << 'X';
-                } else {
-                    throw seqExc(s1[i],s2[i],recn,i,r1.name());
-                }
-            } else {
-                cout << s1[i];
-            }
-            if ((++cno) > linesize) {
-                cout << '\n'; cno = 0; ++lno;
-            }
-        }
-        cout << endl;
+        pr3 = combineRecords(r1, r2, recn);
+        pr3->print(cout, 0,0);
+        delete pr3;
     }        
 }
