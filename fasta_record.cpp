@@ -16,6 +16,21 @@ namespace fasta {
 
                                   // Aspects
 
+std::ostream& Record::printFasta(std::ostream& stream, int width) const
+{
+    if (stream.good()) {
+        stream << ">" << this->name() << "\n";
+        size_t pos=0;
+        while (pos< this->d_sequence.size()) {
+            stream << this->d_sequence.substr(pos,width) << "\n"; 
+            pos += width;
+        }
+        stream << "\n";
+
+    }
+    return stream;
+}
+
 std::ostream& Record::print(std::ostream& stream,
                             int           level,
                             int           spacesPerLevel) const

@@ -129,7 +129,8 @@ int main(int argc, char* argv[]) {
         ++recn;
         if1 >> r1; if2 >> r2;
         pr3 = combineRecords(r1, r2, recn);
-        pr3->print(cout, 0,0);
+        //cout << (*pr3);
+        pr3->printFasta(cout, 40);
         delete pr3;
     }        
 }

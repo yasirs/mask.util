@@ -106,6 +106,8 @@ class Record {
         // Return a reference providing non-modifiable access to the 'sequence'
         // attribute of this object.
 
+    std::ostream& printFasta(std::ostream& stream, int width) const;
+
                                   // Aspects
 
     std::ostream& print(std::ostream& stream,
