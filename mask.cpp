@@ -6,10 +6,12 @@
 #include <string>
 #include <sstream>
 #include <stdexcept>
+#include <boost/program_options.hpp>
 
-
+namespace po = boost::program_options;
 
 using namespace std;
+
 
 int a_to_i(const char *s) {
     stringstream ss;
@@ -109,6 +111,30 @@ fasta::Record* combineRecords(fasta::Record r1, fasta::Record r2, int recn) {
 }
 
 int main(int argc, char* argv[]) {
+
+    // Declare the supported options.
+    po::options_description desc("Allowed options");
+    desc.add_options()
+        ("help", "produce help message")
+        ("linewidth", po::value<int>(), "set max line width for output FASTA")
+        ("maskchar", po::value<char>(), "masking character")
+    ;
+    po::variables_map vm;
+    po::store(po::parse_command_line(argc, argv, desc), vm);
+    po::notify(vm);
+
+    if (vm.count("help")) {
+        cout << desc << "\n";
+        return 1;
+    }
+
+    int width = 50;
+    if (vm.count("linewdith")) {
+        width = vm["linewidth"].as<int>();
+        cout << "width set to "<<width<<endl;
+    }
+    
+
     fasta::Record r1, r2;
     fasta::Record* pr3;
     int linesize;
