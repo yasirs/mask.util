@@ -70,7 +70,7 @@ inline bool ismasked(const char c) {
     return ((c=='n')or(c=='N')or(c=='X')or(c=='x'));
 }
 
-fasta::Record* combineRecords(fasta::Record r1, fasta::Record r2, int recn) {
+fasta::Record* combineRecords(const fasta::Record& r1, const fasta::Record& r2, int recn) {
     auto pr = new fasta::Record;
     std::string name, sequence;
     std::stringstream seqstream;
@@ -130,7 +130,7 @@ int main(int argc, char* argv[]) {
         if1 >> r1; if2 >> r2;
         pr3 = combineRecords(r1, r2, recn);
         //cout << (*pr3);
-        pr3->printFasta(cout, 40);
+        pr3->printFasta(cout, linesize);
         delete pr3;
     }        
 }
